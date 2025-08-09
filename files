@@ -1,0 +1,221 @@
+// components/site-header.tsx
+"use client"
+
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
+
+const nav = [
+  { href: "/", label: "Inicio" },
+  { href: "/categoria/inversion", label: "Inversión" },
+  { href: "/categoria/nfl", label: "NFL" },
+  { href: "/categoria/ufc", label: "UFC" },
+  { href: "/resumen-domingo", label: "Resumen Domingo" },
+  { href: "/acerca", label: "Acerca" },
+  { href: "/studio", label: "Studio" },
+]
+
+export function SiteHeader() {
+  const pathname = usePathname()
+
+  return (
+    <header className="border-b bg-white">
+      {/* Skip link para accesibilidad */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring-2 focus:ring-gray-900"
+      >
+        {"Saltar al contenido"}
+      </a>
+
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="font-semibold">
+            <span className="text-xl" style={{ color: "#10B981" }}>
+              MenteVolátil
+            </span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-3">
+            {nav.map((item) => {
+              const active = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href))
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-900 rounded",
+                    active ? "text-gray-900" : "text-gray-600 hover:text-gray-900",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
+          <nav className="md:hidden -mr-2 overflow-x-auto whitespace-nowrap text-sm text-gray-600">
+            <Link href="/resumen-domingo" className="hover:text-gray-900">
+              Resumen
+            </Link>
+          </nav>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+// app/(site)/post/[slug]/page.tsx
+import type { Metadata } from "next"
+import Image from "next/image"
+import { notFound } from "next/navigation"
+import { fetchPostBySlug } from "@/lib/data"
+import { CategoryTag } from "@/components/category-tag"
+import { PortableText } from "@portabletext/react"
+import { formatDate } from "@/lib/format-date"
+import { estimateReadingTime, extractPlainText } from "@/lib/reading-time"
+
+export const revalidate = 3600
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = await fetchPostBySlug(params.slug)
+  if (!post) return {}
+  const title = `${post.title} — MenteVolátil`
+  const description = post.excerpt ?? "Artículo de MenteVolátil"
+  const image = ("coverImage" in post && post.coverImage) || "/placeholder.svg?height=630&width=1200"
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: image }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  }
+}
+
+export default async function PostDetailPage({ params }: { params: { slug: string } }) {
+  const post = await fetchPostBySlug(params.slug)
+  if (!post) notFound()
+
+  const categories: string[] = "categories" in post ? (post.categories as string[]) : []
+  const authorName = "author" in post ? post.author?.name : "MenteVolátil"
+
+  const plainText =
+    "content" in post && post.content
+      ? extractPlainText((post as any).content)
+      : (post as any).contentHtml
+        ? String((post as any).contentHtml).replace(/<[^>]+>/g, " ")
+        : String(post.excerpt || "")
+  const readingMinutes = estimateReadingTime(plainText)
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    datePublished: post.date,
+    author: { "@type": "Person", name: authorName },
+    image: "coverImage" in post && post.coverImage ? [post.coverImage] : undefined,
+    articleSection: categories,
+    inLanguage: "es-ES",
+  }
+
+  return (
+    <article className="space-y-8">
+      <header className="space-y-3">
+        <h1 className="font-serif text-3xl md:text-5xl leading-tight">{post.title}</h1>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+          <span>{post.date ? formatDate(post.date) : null}</span>
+          <span>{"\u2022"}</span>
+          <span>Por {authorName}</span>
+          <span>{"\u2022"}</span>
+          <span>{readingMinutes} min de lectura</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <CategoryTag key={c} slug={c} />
+          ))}
+        </div>
+      </header>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+      {"coverImage" in post && post.coverImage ? (
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-gray-50">
+          <Image
+            src={post.coverImage || "/placeholder.svg?height=720&width=1280&query=cover%20image"}
+            alt={post.title}
+            width={1280}
+            height={720}
+            className="h-full w-full object-cover"
+            priority={true}
+          />
+        </div>
+      ) : null}
+
+      <div className="prose prose-lg prose-gray max-w-none prose-headings:font-serif prose-img:rounded-lg prose-a:underline-offset-2 hover:prose-a:text-gray-900">
+        {"content" in post && post.content ? (
+          <PortableText value={(post as any).content} />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: (post as any).contentHtml }} />
+        )}
+      </div>
+    </article>
+  )
+}
+
+// app/sitemap.xml/route.ts
+import { fetchFeaturedPost, fetchRecentPosts, fetchRecaps } from "@/lib/data"
+
+export async function GET(request: Request) {
+  const origin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || new URL(request.url).origin.replace(/\/$/, "")
+
+  const [featured, recent, recaps] = await Promise.all([fetchFeaturedPost(), fetchRecentPosts(50), fetchRecaps()])
+
+  const urls = new Set<string>()
+  const push = (path: string) => urls.add(`${origin}${path}`)
+
+  // Rutas estáticas
+  push("/")
+  push("/categoria/inversion")
+  push("/categoria/nfl")
+  push("/categoria/ufc")
+  push("/resumen-domingo")
+  push("/acerca")
+
+  // Posts
+  if (featured) push(`/post/${featured.slug}`)
+  recent.forEach((p) => push(`/post/${p.slug}`))
+
+  // Recaps
+  recaps.forEach((r) => push(`/resumen-domingo/${r.slug}`))
+
+  const now = new Date().toISOString()
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${Array.from(urls)
+  .map(
+    (loc) => `<url>
+  <loc>${loc}</loc>
+  <lastmod>${now}</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>${loc.endsWith("/") ? "0.8" : "0.6"}</priority>
+</url>`,
+  )
+  .join("\n")}
+</urlset>`
+
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+    },
+  })
+}
