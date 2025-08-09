@@ -1,5 +1,5 @@
-import groq from "groq"
-import { sanityClient, sanityConfigured } from "./sanity"
+import groq from 'groq';
+import { sanityClient, sanityConfigured } from './sanity';
 import {
   MOCK_POSTS,
   MOCK_RECAPS,
@@ -7,22 +7,27 @@ import {
   type Post as MockPost,
   type Recap as MockRecap,
   type Settings as MockSettings,
-} from "./mock-data"
+} from './mock-data';
 
-export type Post = MockPost
-export type Recap = MockRecap
-export type Settings = MockSettings
+export type Post = MockPost;
+export type Recap = MockRecap;
+export type Settings = MockSettings;
 
 export async function fetchSettings(): Promise<Settings> {
-  if (!sanityConfigured() || !sanityClient) return MOCK_SETTINGS
-  const data = await sanityClient.fetch(groq`*[_type == "settings"][0]{ siteTitle, description, accent }`)
-  return data ?? MOCK_SETTINGS
+  if (!sanityConfigured() || !sanityClient) return MOCK_SETTINGS;
+  const data = await sanityClient.fetch(
+    groq`*[_type == "settings"][0]{ siteTitle, description, accent }`
+  );
+  return data ?? MOCK_SETTINGS;
 }
 
 export async function fetchFeaturedPost(): Promise<Post | null> {
+  console.log('Fetching featured post...');
+
   if (!sanityConfigured() || !sanityClient) {
-    return MOCK_POSTS.find((p) => p.featured) ?? MOCK_POSTS[0] ?? null
+    return MOCK_POSTS.find((p) => p.featured) ?? MOCK_POSTS[0] ?? null;
   }
+  console.log('Fetching from Sanity...');
   const data = await sanityClient.fetch(
     groq`*[_type == "post" && featured == true] | order(date desc)[0]{
       "id": _id,
@@ -35,14 +40,14 @@ export async function fetchFeaturedPost(): Promise<Post | null> {
       "categories": categories[]->slug.current,
       "contentHtml": "",
       featured
-    }`,
-  )
-  return data ?? null
+    }`
+  );
+  return data ?? null;
 }
 
 export async function fetchRecentPosts(limit = 10): Promise<Post[]> {
   if (!sanityConfigured() || !sanityClient) {
-    return MOCK_POSTS.filter((p) => !p.featured).slice(0, limit)
+    return MOCK_POSTS.filter((p) => !p.featured).slice(0, limit);
   }
   const data = await sanityClient.fetch(
     groq`*[_type == "post"] | order(date desc){
@@ -56,14 +61,14 @@ export async function fetchRecentPosts(limit = 10): Promise<Post[]> {
       "categories": categories[]->slug.current,
       "contentHtml": "",
       featured
-    }`,
-  )
-  return data.filter((p: any) => !p.featured).slice(0, limit)
+    }`
+  );
+  return data.filter((p: any) => !p.featured).slice(0, limit);
 }
 
 export async function fetchPostsByCategory(category: string): Promise<Post[]> {
   if (!sanityConfigured() || !sanityClient) {
-    return MOCK_POSTS.filter((p) => p.categories.includes(category as any))
+    return MOCK_POSTS.filter((p) => p.categories.includes(category as any));
   }
   const data = await sanityClient.fetch(
     groq`*[_type == "post" && $cat in categories[]->slug.current] | order(date desc){
@@ -78,14 +83,14 @@ export async function fetchPostsByCategory(category: string): Promise<Post[]> {
       "contentHtml": "",
       featured
     }`,
-    { cat: category },
-  )
-  return data
+    { cat: category }
+  );
+  return data;
 }
 
 export async function fetchPostBySlug(slug: string): Promise<any | null> {
   if (!sanityConfigured() || !sanityClient) {
-    return MOCK_POSTS.find((p) => p.slug === slug) ?? null
+    return MOCK_POSTS.find((p) => p.slug === slug) ?? null;
   }
   const data = await sanityClient.fetch(
     groq`*[_type == "post" && slug.current == $slug][0]{
@@ -99,13 +104,13 @@ export async function fetchPostBySlug(slug: string): Promise<any | null> {
       "categories": categories[]->slug.current,
       content
     }`,
-    { slug },
-  )
-  return data ?? null
+    { slug }
+  );
+  return data ?? null;
 }
 
 export async function fetchRecaps(): Promise<Recap[]> {
-  if (!sanityConfigured() || !sanityClient) return MOCK_RECAPS
+  if (!sanityConfigured() || !sanityClient) return MOCK_RECAPS;
   const data = await sanityClient.fetch(
     groq`*[_type == "recap"] | order(weekOf desc){
       "id": _id,
@@ -116,14 +121,14 @@ export async function fetchRecaps(): Promise<Recap[]> {
       "nflHtml": "",
       "ufcHtml": "",
       "extrasHtml": ""
-    }`,
-  )
-  return data
+    }`
+  );
+  return data;
 }
 
 export async function fetchRecapBySlug(slug: string): Promise<any | null> {
   if (!sanityConfigured() || !sanityClient) {
-    return MOCK_RECAPS.find((d) => d.slug === slug) ?? null
+    return MOCK_RECAPS.find((d) => d.slug === slug) ?? null;
   }
   const data = await sanityClient.fetch(
     groq`*[_type == "recap" && slug.current == $slug][0]{
@@ -136,7 +141,7 @@ export async function fetchRecapBySlug(slug: string): Promise<any | null> {
       ufc,
       extras
     }`,
-    { slug },
-  )
-  return data ?? null
+    { slug }
+  );
+  return data ?? null;
 }
