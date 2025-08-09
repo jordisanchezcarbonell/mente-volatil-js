@@ -1,51 +1,66 @@
-import type React from "react"
-import { notFound } from "next/navigation"
-import { fetchRecapBySlug } from "@/lib/data"
-import { formatDate } from "@/lib/format-date"
+import type React from 'react';
+import { notFound } from 'next/navigation';
+import { fetchRecapBySlug } from '@/lib/data';
+import { formatDate } from '@/lib/format-date';
 
-export const revalidate = 3600
+export const revalidate = 3600;
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="space-y-2">
-      <h2 className="font-serif text-2xl">{title}</h2>
-      <div className="prose prose-lg prose-gray max-w-none prose-headings:font-serif prose-img:rounded-lg">
+    <section className='space-y-2'>
+      <h2 className='font-serif text-2xl'>{title}</h2>
+      <div className='prose prose-lg prose-gray max-w-none prose-headings:font-serif prose-img:rounded-lg'>
         {children}
       </div>
     </section>
-  )
+  );
 }
 
-export default async function RecapDetailPage({ params }: { params: { slug: string } }) {
-  const recap = await fetchRecapBySlug(params.slug)
-  if (!recap) notFound()
+export default async function RecapDetailPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = await params;
+  const recap = await fetchRecapBySlug(slug);
+  if (!recap) notFound();
 
   return (
-    <article className="space-y-8">
-      <header className="space-y-2">
-        <h1 className="font-serif text-3xl md:text-5xl leading-tight">{recap.title}</h1>
-        <p className="text-sm text-gray-600">{recap.date ? formatDate(recap.date) : null}</p>
+    <article className='space-y-8'>
+      <header className='space-y-2'>
+        <h1 className='font-serif text-3xl md:text-5xl leading-tight'>
+          {recap.title}
+        </h1>
+        <p className='text-sm text-gray-600'>
+          {recap.date ? formatDate(recap.date) : null}
+        </p>
       </header>
 
-      <p className="text-gray-800">
-        Hola — aquí tienes tu Resumen Dominical. Un vistazo claro y directo a la semana: mercados, NFL, UFC y algo
-        extra.
+      <p className='text-gray-800'>
+        Hola — aquí tienes tu Resumen Dominical. Un vistazo claro y directo a la
+        semana: mercados, NFL, UFC y algo extra.
       </p>
 
-      <div className="grid grid-cols-1 gap-8">
-        <Section title="Inversión">
+      <div className='grid grid-cols-1 gap-8'>
+        <Section title='Inversión'>
           <div dangerouslySetInnerHTML={{ __html: recap.marketsHtml }} />
         </Section>
-        <Section title="NFL">
+        <Section title='NFL'>
           <div dangerouslySetInnerHTML={{ __html: recap.nflHtml }} />
         </Section>
-        <Section title="UFC">
+        <Section title='UFC'>
           <div dangerouslySetInnerHTML={{ __html: recap.ufcHtml }} />
         </Section>
-        <Section title="Extra">
+        <Section title='Extra'>
           <div dangerouslySetInnerHTML={{ __html: recap.extrasHtml }} />
         </Section>
       </div>
     </article>
-  )
+  );
 }

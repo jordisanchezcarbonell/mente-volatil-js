@@ -1,21 +1,43 @@
-import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import './globals.css'
+import type { Metadata } from 'next';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
-}
-
+  title: 'MenteVolátil',
+  description:
+    'Ideas, análisis y reflexiones sobre inversión, mercados y actualidad macroeconómica.',
+  generator: 'Next.js',
+  authors: [{ name: 'MenteVolátil' }],
+  keywords: [
+    'inversión',
+    'macroeconomía',
+    'mercados financieros',
+    'estrategia',
+    'análisis',
+  ],
+  openGraph: {
+    title: 'MenteVolátil',
+    description:
+      'Ideas, análisis y reflexiones sobre inversión, mercados y actualidad macroeconómica.',
+    url: 'https://mentevolatil.com',
+    siteName: 'MenteVolátil',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MenteVolátil',
+    description:
+      'Ideas, análisis y reflexiones sobre inversión, mercados y actualidad macroeconómica.',
+  },
+};
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
         <style>{`
 html {
@@ -27,5 +49,5 @@ html {
       </head>
       <body>{children}</body>
     </html>
-  )
+  );
 }
