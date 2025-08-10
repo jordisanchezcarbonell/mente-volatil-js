@@ -11,7 +11,7 @@ export default async function CategoryPage({
   const { slug } = await params;
   const posts = await fetchPostsByCategory(slug);
   console.log(`Category ${slug} has ${posts.length} posts`);
-  if (!posts.length) notFound();
+  if (!posts.length) <p className='text-gray-600'>No hay ninguna entrada.</p>;
 
   return (
     <div className='space-y-8'>

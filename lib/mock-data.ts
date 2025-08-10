@@ -85,6 +85,47 @@ export const MOCK_POSTS: Post[] = [
   `,
     featured: false,
   },
+  {
+    id: 'p2',
+    slug: 'ufc-fight-night-dolidze-vs-hernandez-2025-08-09',
+    title: 'UFC Fight Night: Dolidze vs. Hernandez – Análisis y momentos clave',
+    excerpt:
+      'Anthony “Fluffy” Hernandez arrasa con Roman Dolidze y se consolida como uno de los contendientes más peligrosos del peso medio.',
+    date: '2025-08-09',
+    coverImage: '/imgPost/ufc-dolidze-vs-hernandez.avif',
+    author: MOCK_AUTHORS[0],
+    categories: ['ufc'],
+    contentHtml: `
+    <h2>📌 Punto clave de la noche</h2>
+    <p>Anthony “Fluffy” Hernandez firmó una actuación brutal y metódica. Desde el primer asalto presionó sin descanso a Roman Dolidze, lo agotó con ritmo alto, transiciones constantes y golpes de desgaste. Finalmente, en el cuarto asalto, lo finalizó por <em>rear-naked choke</em>. Esto lo deja con <strong>8 victorias consecutivas</strong> y lo pone como candidato serio al título en peso medio.</p>
+
+    <h2>🔍 Claves tácticas del main event</h2>
+    <ul>
+      <li><strong>Presión constante</strong> → no dio espacio a Dolidze para golpear con potencia.</li>
+      <li><strong>Lucha y grappling dominantes</strong> → control en el clinch y derribos efectivos.</li>
+      <li><strong>Resistencia y cardio</strong> → mantuvo la intensidad hasta el cuarto asalto.</li>
+      <li><strong>Cierre clínico</strong> → sumisión limpia cuando Dolidze ya estaba exhausto.</li>
+    </ul>
+
+    <h2>🌟 Otras actuaciones destacadas</h2>
+    <ul>
+      <li><strong>Christian Leroy Duncan</strong> sorprendió con un codazo giratorio para TKO sobre Eryk Anders, demostrando creatividad y timing.</li>
+      <li><strong>Elijah Smith</strong> logró uno de los KO más espectaculares del año con un <em>slam</em> en el primer asalto.</li>
+      <li><strong>Joselyne Edwards</strong> y <strong>Uroš Medić</strong> consiguieron finalizaciones rápidas que encendieron la cartelera preliminar.</li>
+      <li><strong>Iasmin Lucindo</strong> y <strong>Steve Erceg</strong> mostraron consistencia y control para ganar por decisión unánime.</li>
+    </ul>
+
+    <h2>🏆 Premios de la noche</h2>
+    <ul>
+      <li><strong>Performance:</strong> Hernandez, Duncan, Smith y Edwards.</li>
+      <li><strong>Pelea de la noche:</strong> No se otorgó.</li>
+    </ul>
+
+    <h2>📈 Lectura general del evento</h2>
+    <p>Fue una velada con <strong>alto ritmo, muchas finalizaciones y actuaciones explosivas</strong>. El gran titular es el dominio de Hernandez, que combina presión implacable con resistencia de élite, y ahora se proyecta como uno de los peleadores más temidos en las 185 lbs. Las preliminares aportaron nocauts llamativos que mantuvieron la energía del público desde el inicio.</p>
+  `,
+    featured: false,
+  },
 ];
 
 export const MOCK_RECAPS: Recap[] = [
