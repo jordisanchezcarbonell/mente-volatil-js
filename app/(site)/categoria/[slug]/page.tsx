@@ -10,6 +10,7 @@ export default async function CategoryPage({
 }) {
   const { slug } = await params;
   const posts = await fetchPostsByCategory(slug);
+  console.log(`Category ${slug} has ${posts.length} posts`);
   if (!posts.length) notFound();
 
   return (

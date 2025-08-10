@@ -8,6 +8,7 @@ const nav = [
   { href: '/', label: 'Inicio' },
   { href: '/categoria/inversion', label: 'Inversión' },
   { href: '/categoria/nfl', label: 'NFL' },
+  { href: '/categoria/elf', label: 'ELF' },
   { href: '/categoria/ufc', label: 'UFC' },
   { href: '/resumen-domingo', label: 'Resumen Domingo' },
   { href: '/acerca', label: 'Acerca' },

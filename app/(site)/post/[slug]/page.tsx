@@ -92,7 +92,8 @@ export default async function PostDetailPage({
       />
 
       {post.coverImage ? (
-        <div className='relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-gray-50'>
+        // <div className='relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-gray-50'>
+        <div className='relative w-full overflow-hidden rounded-lg bg-gray-50'>
           <Image
             src={
               post.coverImage ||
